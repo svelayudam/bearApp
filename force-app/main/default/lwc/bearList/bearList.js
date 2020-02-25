@@ -8,14 +8,17 @@ import searchBears from '@salesforce/apex/BearController.searchBears';
 import {loadStyle} from 'lightning/platformResourceLoader';
 
 export default class BearList extends NavigationMixin(LightningElement) {
-	//@track bears;
-    //@track error;
-    
-    //@wire(getAllBears) bears;
 
     @track searchTerm = '';
+    @track bears;
+    @wire(CurrentPageReference) pageRef;
     @wire(searchBears, {searchTerm: '$searchTerm'})
-    bears;
+    loadBears(result) {
+        this.bears = result;
+        if (result.data) {
+            fireEvent(this.pageRef, 'bearListUpdate', result.data);
+        }
+    }
     
 	// appResources = {
 	// 	bearSilhouette: ursusResources +'/img/standing-bear-silhouette.png',
